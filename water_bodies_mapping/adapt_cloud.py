@@ -13,7 +13,7 @@ from datetime import datetime
 from PIL import Image
 from scipy.ndimage import label
 
-st.set_page_config(layout='wides')
+st.set_page_config(layout='wide')
 
 with st.sidebar:
     image_path = 'water_bodies_mapping/images/logo7.png'
