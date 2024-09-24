@@ -156,7 +156,7 @@ def water_body_analysis():
     with st.container(border=False):
         st.markdown("<h1 style='text-align: center; color: #4B0082;'>📊 ADAPT Water Body Database</h1>", unsafe_allow_html=True)
 
-    df = pd.read_excel('bulawayo water bodies mapping project/datasets/2024 water body sizes.xlsx')
+    df = pd.read_excel('water_bodies_mapping/datasets/2024 water body sizes.xlsx')
 
     with st.expander(label="📈 View Water Body Database, Graphs and Charts", expanded=False):
         col1, col2 = st.columns(2)
