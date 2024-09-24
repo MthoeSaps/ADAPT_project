@@ -1,26 +1,23 @@
 import streamlit as st
 import os
 import sqlite3
+from datetime import datetime
 import pandas as pd
 import plotly.express as px
 import base64
-from datetime import datetime
-from PIL import Image
 
 # Set the page configuration
 st.set_page_config(layout='wide', page_title="ADAPT - Advanced Data Analytics", page_icon="📊")
-
-with st.sidebar:
-    image_path = 'water_bodies_mapping/images/logo7.png'
-    image = Image.open(image_path)
-    with st.container(border=True):
-        st.image(image, caption='Advanced Data Analytics and Predictive Technology', use_column_width=True)
 
 # Define the folder paths
 upload_folder = 'water_bodies_mapping/TIFF images'
 excel_folder = 'water_bodies_mapping/datasets'
 database_path = os.path.join(upload_folder, 'map_contributions.db')
 map_contributions_folder = 'water_bodies_mapping/map contributions'
+
+# Function to check the username and password
+def check_credentials(username, password):
+    return username == "admin" and password == "password"
 
 # Function to initialize the database and create the contributions table
 def init_database():
@@ -84,7 +81,7 @@ def admin_panel():
         list_uploaded_files()
 
     # View Map Contributions Section Header
-    st.markdown("<h2 style='color: #4B0082;'>🗺️ View Map Contributions" + info_icon("Supported formats: GeoTIFF files (.tif, .tiff), Shapefiles (.shp), DXF files (.dxf), Image files (.png, .jpg, .jpeg)") + "</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color: #4B0082;'>🗺️ View Map Contributions" + info_icon("Supported formats: GeoTIFF files (.tif, .tiff), Shapefiles (.shp, .dxf, .png, .jpg, .jpeg)") + "</h2>", unsafe_allow_html=True)
     
     with st.expander("Details", expanded=False):
         view_map_contributions()
@@ -330,10 +327,39 @@ def main():
     st.sidebar.markdown("### 👤 Current User")
     st.sidebar.markdown("**Admin**")
 
+    # Logout Button
+    if st.sidebar.button("🚪 Logout"):
+        st.session_state.logged_in = False
+        st.rerun()  # Refresh the app to show the login form again
+
     if page == "🗂️ Admin Panel":
         admin_panel()
     elif page == "📊 KPI Metrics":
         kpi_metrics_page()
 
+# Main execution block
 if __name__ == "__main__":
-    main()
+    # Login Expander
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+
+    with st.expander("Login", expanded=True):
+        st.markdown('<div class="login-container">', unsafe_allow_html=True)
+        st.markdown('<div class="login-title">Login to ADAPT</div>', unsafe_allow_html=True)
+
+        username = st.text_input("Username", key="username", placeholder="Enter your username")
+        password = st.text_input("Password", type='password', key="password", placeholder="Enter your password")
+
+        # Login button using Streamlit's default button
+        if st.button("Login"):
+            if check_credentials(username, password):
+                st.session_state.logged_in = True
+                st.success("Logged in successfully!")  # Success message inside the expander
+            else:
+                st.error("Incorrect username or password")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Run the main application if logged in
+    if st.session_state.logged_in:
+        main()
