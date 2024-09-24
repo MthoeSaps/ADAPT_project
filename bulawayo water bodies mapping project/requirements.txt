@@ -3,6 +3,6 @@ sqlite3
 pandas
 plotly
 openpyxl
-Pillow
+pillow
 matplotlib
 scipy
